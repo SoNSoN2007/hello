@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أنا آسف ❤️</title>
+    
+    <!-- Google Fonts: Tajawal for elegant Arabic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS for Animations, Glassmorphism, and Vibes -->
+    <style>
+        :root {
+            --primary-pink: #f472b6;
+            --soft-rose: #fda4af;
+            --soft-purple: #e9d5ff;
+            --bg-color: #fdf2f8;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #fce7f3 0%, #fae8ff 50%, #fdf2f8 100%);
+            background-attachment: fixed;
+            color: #4a044e; /* Dark purple for readability */
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px -10px rgba(244, 114, 182, 0.3);
+            border-radius: 24px;
+        }
+
+        /* Section hiding/showing logic */
+        .story-section {
+            min-height: 100vh;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .story-section.active {
+            display: flex;
+        }
+
+        .story-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(45deg, #ec4899, #d946ef);
+            color: white;
+            padding: 14px 36px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            border: 2px solid transparent;
+            cursor: pointer;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #db2777;
+            padding: 12px 32px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: 2px solid #fbcfe8;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover, .btn-secondary:active {
+            background: #fdf2f8;
+            border-color: #f472b6;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUp linear forwards;
+            z-index: 1;
+            opacity: 0.6;
+            font-size: 1.5rem;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 15px rgba(244, 114, 182, 0.5);
+        }
+
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #ec4899;
+        }
+        
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Ambient Stars/Dots Background */
+        .bg-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(244, 114, 182, 0.2) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        /* Romance Overlay for Stage 7 */
+        #romance-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(168,85,247,0.1));
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 2s ease;
+            pointer-events: none;
+        }
+        
+        .romantic-mode #romance-overlay {
+            opacity: 1;
+        }
+
+        /* Investigation Cards */
+        .inv-card {
+            background: rgba(255,255,255,0.8);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px dashed #fbcfe8;
+            transition: transform 0.3s ease;
+        }
+        .inv-card:hover {
+            transform: translateY(-5px) rotate(-2deg);
+        }
+
+        /* Reason Cards */
+        .reason-card {
+            background: linear-gradient(135deg, #ffffff, #fdf2f8);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .reason-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-300 selection:text-white">
+
+    <div class="bg-dots"></div>
+    <div id="romance-overlay"></div>
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop preload="auto">
+        <!-- Source is injected via JS -->
+    </audio>
+
+    <!-- Floating Controls -->
+    <div class="fixed top-4 left-4 z-50 flex gap-2">
+        <button id="music-toggle" class="w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm border border-pink-200 text-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-pink-500" title="تشغيل/إيقاف الموسيقى">
+            🔇
+        </button>
+    </div>
+    <div class="fixed top-4 right-4 z-50">
+        <button id="restart-btn" class="px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-pink-200 text-sm font-bold flex items-center justify-center shadow-lg hover:scale-105 transition-transform text-pink-500 gap-2">
+            🔄 من البداية
+        </button>
+    </div>
+
+    <main id="app-container" class="w-full relative z-10 pb-20">
+
+        <!-- ================= SECTION 1: INTRO ================= -->
+        <section id="section-1" class="story-section active visible">
+            <div class="glass-card w-11/12 max-w-md p-8 md:p-10 text-center flex flex-col items-center gap-6">
+                <div class="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center text-5xl mb-2 animate-bounce shadow-inner">
+                    💌
+                </div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-pink-600 leading-relaxed glow-text">
+                    استني ثانية...<br>عندي حاجة مهمة أقولها لك ❤️
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 font-medium bg-white/50 py-2 px-4 rounded-lg inline-block">
+                    الموضوع كله 10 دقايق...<br>بس شكلي عملت مصيبة 😂
+                </p>
+                <button class="btn-primary mt-6 w-full animate-pulse" onclick="nextSection(2)">
+                    دوسي هنا ❤️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: APOLOGY ================= -->
+        <section id="section-2" class="story-section">
+            <div class="glass-card w-11/12 max-w-lg p-8 md:p-10 text-center flex flex-col items-center gap-6">
+                <h2 class="text-4xl font-black text-rose-500 mb-2 glow-text">أنا آسف ❤️</h2>
+                
+                <div class="text-right w-full bg-white/40 p-6 rounded-2xl border border-white/60">
+                    <p class="text-lg md:text-xl leading-loose text-gray-800 font-medium" id="apology-text-1">
+                        عارف إنك زعلتي مني، ومن حقك تزعلي.
+                        أنا فعلًا غلطت لما سيبتك وروحت أكلم صاحبي، وبعدها نسيت أرد عليكي الشوية دول بجد...<br><br>
+                        عارف إن الـ10 دقايق دي بالنسبالي ممكن تكون وقت صغير...
+                        بس لما الشخص اللي قدامي يكون سكرتي من حقها انها تدايق 😭😭.<br><br>
+                        أنا مش جاي أبرر...<br>
+                        <span class="text-pink-600 font-bold text-xl block mt-2">أنا جاي أقولك إنّي آسف.</span>
+                    </p>
+                </div>
+                
+                <button class="btn-primary mt-4 w-full" onclick="nextSection(3)">
+                    ممكن نكمل؟ 🥺
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: THE INVESTIGATION ================= -->
+        <section id="section-3" class="story-section">
+            <div class="glass-card w-11/12 max-w-lg p-8 text-center flex flex-col items-center gap-6">
+                <div class="text-4xl">👨‍⚖️</div>
+                <h2 class="text-2xl md:text-3xl font-bold text-purple-700">التحقيق الرسمي في قضية اني سيبتك الحبة دول  😂</h2>
+                
+                <div class="grid grid-cols-2 gap-4 w-full mt-4 text-right">
+                    <div class="inv-card">
+                        <span class="text-xs text-gray-500 block mb-1">الجريمة:</span>
+                        <span class="font-bold text-gray-800">سيبتك لوحدك </span>
+                    </div>
+                    <div class="inv-card">
+                        <span class="text-xs text-gray-500 block mb-1">المدة:</span>
+                        <span class="font-bold text-rose-500">5 دقائق</span>
+                    </div>
+                    <div class="inv-card">
+                        <span class="text-xs text-gray-500 block mb-1">النية:</span>
+                        <span class="font-bold text-gray-800">مش مقصودة 😭</span>
+                    </div>
+                    <div class="inv-card">
+                        <span class="text-xs text-gray-500 block mb-1">النتيجة:</span>
+                        <span class="font-bold text-purple-600">زعل رسمي بنسبة 100%</span>
+                    </div>
+                    <div class="inv-card col-span-2 bg-pink-50 border-pink-300 text-center">
+                        <span class="text-xs text-pink-500 block mb-1">الحكم المبدئي:</span>
+                        <span class="font-bold text-xl text-pink-600">المتهم يعترف بالذنب 😂❤️</span>
+                    </div>
+                </div>
+
+                <div id="verdict-box" class="hidden w-full bg-green-50 border border-green-200 rounded-xl p-4 mt-2">
+                    <h3 class="font-bold text-green-700 mb-1">الحكم النهائي:</h3>
+                    <p class="text-green-800">المتهم لازم يراضيكي فورًا، وممنوع يكرر نفس الحركة مرة تانية 😂❤️</p>
+                </div>
+
+                <button id="btn-verdict" class="btn-primary w-full mt-2" onclick="showVerdict()">
+                    أكمل الحكم... ⚖️
+                </button>
+                <button id="btn-next-4" class="btn-secondary w-full hidden mt-2" onclick="nextSection(4)">
+                    موافق على الحكم 🙋‍♂️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: REASONS ================= -->
+        <section id="section-4" class="story-section">
+            <div class="glass-card w-11/12 max-w-lg p-8 text-center flex flex-col items-center gap-6">
+                <h2 class="text-3xl font-bold text-pink-600 mb-2">طيب ليه أنا آسف بجد؟</h2>
+                
+                <div class="flex flex-col gap-4 w-full" id="reasons-container">
+                    <div class="reason-card transition-delay-100">
+                        <p class="text-xl font-bold text-gray-800">لأنك مهمة عندي ❤️</p>
+                    </div>
+                    <div class="reason-card transition-delay-200">
+                        <p class="text-lg font-medium text-gray-700">لأن تجاهلك مش حاجة أحب أعملها</p>
+                    </div>
+                    <div class="reason-card transition-delay-300">
+                        <p class="text-lg font-medium text-purple-700">لأن زعلك يهمني</p>
+                    </div>
+                    <div class="reason-card transition-delay-400">
+                        <p class="text-xl font-bold text-rose-500">لأني مقدرش اخليكي تفضلي زعلانة على طول مني 😭❤️</p>
+                    </div>
+                </div>
+
+                <button class="btn-primary w-full mt-6" onclick="nextSection(5)">
+                    عشان كده... ❤️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 5: SPECIAL MESSAGE ================= -->
+        <section id="section-5" class="story-section">
+            <div class="glass-card w-11/12 max-w-lg p-8 md:p-10 text-center flex flex-col items-center gap-6">
+                <h2 class="text-2xl font-bold text-gray-500 mb-2">ودي الحاجة اللي عايزك تعرفيها...</h2>
+                
+                <div class="text-right w-full min-h-[250px] bg-white/60 p-6 rounded-2xl shadow-sm border border-pink-100">
+                    <p id="typing-container" class="text-xl leading-loose text-gray-800 font-medium"></p>
+                </div>
+
+                <button id="btn-next-6" class="btn-primary w-full opacity-0 transition-opacity duration-1000 hidden" onclick="nextSection(6)">
+                    طيب... ❤️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 6: THE TEST ================= -->
+        <section id="section-6" class="story-section">
+            <div class="glass-card w-11/12 max-w-md p-8 md:p-10 text-center flex flex-col items-center gap-6">
+                <div class="text-5xl animate-bounce">👀</div>
+                <h2 class="text-2xl font-bold text-gray-600">عندي سؤال مهم جدًا...</h2>
+                <h1 class="text-4xl font-extrabold text-pink-600 glow-text mb-4">سامحتيني؟ ❤️</h1>
+                
+                <div class="flex flex-col gap-4 w-full">
+                    <button class="btn-primary py-4 text-xl" onclick="handleForgiveness('yes')">أيوه ❤️</button>
+                    <button class="btn-secondary py-3 text-lg" onclick="handleForgiveness('no')">لسه زعلانة 😒</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= OUTCOME: YES ================= -->
+        <section id="section-yes" class="story-section">
+            <div class="glass-card w-11/12 max-w-md p-10 text-center flex flex-col items-center gap-6 border-pink-400">
+                <div class="text-6xl mb-4">🎉</div>
+                <h1 class="text-3xl font-black text-rose-500 glow-text leading-relaxed">
+                    أحلى خبر في حياتي كلها 😭❤️
+                </h1>
+                <p class="text-xl text-gray-700 font-medium bg-pink-50 p-4 rounded-xl border border-pink-200">
+                    وعد مش هسيباالحبة الصغيرة دي تاني عشان ميعملوا أزمة دولية تاني 😂
+                </p>
+                <button class="btn-primary w-full mt-4" onclick="nextSection(8)">
+                    بحبك ❤️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= OUTCOME: NO ================= -->
+        <section id="section-no" class="story-section">
+            <div class="glass-card w-11/12 max-w-md p-10 text-center flex flex-col items-center gap-6">
+                <div class="text-5xl mb-2">🫂</div>
+                <p class="text-xl text-gray-800 font-medium leading-relaxed">
+                    طيب... معاكي حقك 😂<br>
+                    خدي وقتك،<br>
+                    بس أنا لسه عندي محاولة أخيرة أراضيكي ❤️
+                </p>
+                <button class="btn-primary w-full mt-6" onclick="nextSection(7)">
+                    آخر محاولة ❤️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 7: LAST ATTEMPT ================= -->
+        <section id="section-7" class="story-section">
+            <div class="glass-card w-11/12 max-w-md p-10 text-center flex flex-col items-center gap-8">
+                <h2 class="text-2xl font-bold text-gray-500">لو رجع بيا الوقت...</h2>
+                
+                <h1 class="text-3xl font-black text-pink-600 leading-relaxed">
+                    كنت هرد عليك قبل ما أروح أكلم صاحبي أصلًا 😂❤️
+                </h1>
+                
+                <div class="w-full h-px bg-pink-200 my-2"></div>
+                
+                <h2 class="text-3xl font-bold text-rose-500">حقك عليا.</h2>
+                <h2 class="text-4xl font-extrabold text-purple-600 glow-text">متزعليش مني ❤️</h2>
+                
+                <button class="btn-primary w-full mt-4 text-xl py-4" onclick="nextSection(8)">
+                    صافي يا لبن؟ 🥺🥛
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 8: FINALE ================= -->
+        <section id="section-8" class="story-section">
+            <div class="glass-card w-11/12 max-w-md p-10 text-center flex flex-col items-center gap-6">
+                
+                <p class="text-lg text-gray-600 font-medium">
+                    من شخص غلط لمدة 10 دقايق...<br>
+                    إلى شخص نفسه يصالحك قبل ما تكملي الموقع 😂❤️
+                </p>
+                
+                <h1 class="text-5xl font-black text-rose-500 my-4 glow-text">
+                    أنا آسف.<br>بجد.
+                </h1>
+
+                <div id="final-success-msg" class="hidden w-full bg-green-100 border-2 border-green-400 p-6 rounded-2xl mt-4">
+                    <div class="text-4xl mb-2">✅❤️</div>
+                    <h3 class="text-xl font-bold text-green-800 mb-2">تم تسجيل طلب الصلح بنجاح</h3>
+                    <p class="text-green-700 font-medium">الحالة: قيد قبول الحبيبة 😂</p>
+                </div>
+                
+                <button id="btn-finale" class="btn-primary w-full mt-4 py-4 text-xl" onclick="showFinalMessage()">
+                    ❤️ خلاص بقى؟
+                </button>
+                
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ==========================================
+        // ===== الإعدادات (تغيير الرابط والنصوص) =====
+        // ==========================================
+        
+        const CONFIG = {
+            // رابط الموسيقى (يمكنك تغييره لأي رابط mp3 مباشر)
+            BACKGROUND_MUSIC: "https://cdn.pixabay.com/download/audio/2022/05/16/audio_b2880c10eb.mp3?filename=romantic-piano-110058.mp3", 
+            
+            // النص الخاص بالقسم الخامس (الرسالة الخاصة)
+            SPECIAL_MESSAGE: "أنا ممكن أغلط، وممكن أنسى، وممكن أعمل حاجات تضايقك من غير ما أقصد...\nبس آخر حاجة أتمناها إني أخليكي تحسي إنك مش مهمة عندي.\n\nأنا آسف على الـ10 دقايق دي،\nوآسف أكتر لو حسيتِ إني تجاهلتك.\n\nكان ممكن أرد...\nوكان المفروض أرد.\n\nفـ حقك عليا ❤️"
+        };
+
+        // ==========================================
+        // ===== إدارة حالة الموقع (State) =====
+        // ==========================================
+
+        let isMusicPlaying = false;
+        let musicStarted = false;
+        const audio = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+
+        // تهيئة الموقع
+        function init() {
+            audio.src = CONFIG.BACKGROUND_MUSIC;
+            audio.volume = 0.5;
+            
+            // Create random floating hearts in background loop
+            setInterval(createFloatingHeart, 1500);
+        }
+
+        // تشغيل/إيقاف الموسيقى
+        function toggleMusic() {
+            if (!musicStarted) {
+                audio.play().catch(e => console.log("Audio play failed:", e));
+                musicStarted = true;
+                isMusicPlaying = true;
+                updateMusicUI(true);
+            } else if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                updateMusicUI(false);
+            } else {
+                audio.play();
+                isMusicPlaying = true;
+                updateMusicUI(true);
+            }
+        }
+
+        function updateMusicUI(isPlaying) {
+            if (isPlaying) {
+                musicBtn.innerText = "🎵";
+                musicBtn.classList.add('bg-pink-100', 'border-pink-400');
+                musicBtn.classList.remove('bg-white/80', 'text-pink-500');
+            } else {
+                musicBtn.innerText = "🔇";
+                musicBtn.classList.remove('bg-pink-100', 'border-pink-400');
+                musicBtn.classList.add('bg-white/80', 'text-pink-500');
+            }
+        }
+
+        // الانتقال بين الأقسام
+        function nextSection(sectionIdStr) {
+            // If it's the first click, start music
+            if (!musicStarted && sectionIdStr == 2) {
+                toggleMusic();
+            }
+
+            const targetId = `section-${sectionIdStr}`;
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                targetSection.classList.add('active');
+                
+                // Trigger reflow for animation
+                void targetSection.offsetWidth;
+                
+                targetSection.classList.add('visible');
+                
+                // Smooth scroll to the new section
+                setTimeout(() => {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Trigger section specific logic
+                    triggerSectionLogic(sectionIdStr);
+                }, 100);
+            }
+        }
+
+        // منطق مخصص لكل قسم
+        function triggerSectionLogic(sectionId) {
+            if (sectionId == 4) {
+                // Animate reason cards sequentially
+                const cards = document.querySelectorAll('.reason-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, 200 * (index + 1));
+                });
+            }
+            else if (sectionId == 5) {
+                // Typing effect for the special message
+                // Prevent re-typing if already done
+                if(document.getElementById('typing-container').innerHTML === "") {
+                    typeWriter("typing-container", CONFIG.SPECIAL_MESSAGE, 50, () => {
+                        const btn = document.getElementById('btn-next-6');
+                        btn.classList.remove('hidden');
+                        setTimeout(() => btn.classList.remove('opacity-0'), 100);
+                    });
+                }
+            }
+            else if (sectionId == 7) {
+                // Turn on romantic background
+                document.body.classList.add('romantic-mode');
+                for(let i=0; i<10; i++) setTimeout(createFloatingHeart, i*200);
+            }
+        }
+
+        // إظهار الحكم (قسم 3)
+        function showVerdict() {
+            document.getElementById('btn-verdict').classList.add('hidden');
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.classList.remove('hidden');
+            verdictBox.classList.add('animate-pulse');
+            
+            setTimeout(() => verdictBox.classList.remove('animate-pulse'), 1000);
+            
+            const nextBtn = document.getElementById('btn-next-4');
+            nextBtn.classList.remove('hidden');
+            
+            // Scroll down a bit to show button
+            setTimeout(() => nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        // التعامل مع سؤال المسامحة (قسم 6)
+        function handleForgiveness(answer) {
+            if (answer === 'yes') {
+                triggerConfetti();
+                // Pop hearts
+                for(let i=0; i<15; i++) setTimeout(createFloatingHeart, i*100);
+                nextSection('yes');
+            } else {
+                nextSection('no');
+            }
+        }
+
+        // إظهار الرسالة النهائية (قسم 8)
+        function showFinalMessage() {
+            document.getElementById('btn-finale').classList.add('hidden');
+            const msg = document.getElementById('final-success-msg');
+            msg.classList.remove('hidden');
+            
+            triggerConfetti();
+            for(let i=0; i<20; i++) setTimeout(createFloatingHeart, i*150);
+            
+            setTimeout(() => msg.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        // تأثير الكتابة
+        function typeWriter(elementId, text, speed, callback) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = "";
+            el.classList.add('typing-cursor');
+            
+            let i = 0;
+            const textArray = text.split('');
+            
+            function type() {
+                if (i < textArray.length) {
+                    if (textArray[i] === '\n') {
+                        el.innerHTML += "<br>";
+                    } else {
+                        el.innerHTML += textArray[i];
+                    }
+                    i++;
+                    // Scroll to bottom of element while typing to keep text in view
+                    el.scrollTop = el.scrollHeight;
+                    
+                    setTimeout(type, speed + (Math.random() * 30)); 
+                } else {
+                    el.classList.remove('typing-cursor');
+                    if(callback) callback();
+                }
+            }
+            setTimeout(type, 800);
+        }
+
+        // قلوب متطايرة
+        const hearts = ["❤️", "💖", "💕", "✨", "🌸", "🥺"];
+        function createFloatingHeart() {
+            const heart = document.createElement("div");
+            heart.className = "floating-heart";
+            heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+            
+            heart.style.left = Math.random() * 90 + "vw";
+            
+            const duration = Math.random() * 4 + 4; // 4s to 8s
+            heart.style.animationDuration = duration + "s";
+            
+            // Random size variation
+            heart.style.fontSize = (Math.random() * 1 + 1) + "rem";
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        // تأثير Confetti
+        function triggerConfetti() {
+            const colors = ['#f472b6', '#fda4af', '#c084fc', '#ffffff', '#fb7185', '#ef4444'];
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                
+                // Start from center mostly
+                const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 200;
+                const startY = window.innerHeight / 2 + (Math.random() - 0.5) * 200;
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.left = startX + 'px';
+                confetti.style.top = startY + 'px';
+                confetti.style.backgroundColor = color;
+                
+                if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
+                
+                document.body.appendChild(confetti);
+                
+                animateConfetti(confetti, startX, startY);
+            }
+        }
+
+        function animateConfetti(element, startX, startY) {
+            let opacity = 1;
+            let y = startY;
+            let x = startX;
+            // Explosive speed
+            let speedY = (Math.random() - 0.8) * 15; 
+            let speedX = (Math.random() - 0.5) * 15;
+            const gravity = 0.5;
+            let rotation = Math.random() * 360;
+            
+            function update() {
+                speedY += gravity; // Apply gravity
+                y += speedY;
+                x += speedX;
+                rotation += 5;
+                
+                if (y > window.innerHeight * 0.7) {
+                    opacity -= 0.03;
+                }
+                
+                element.style.top = y + 'px';
+                element.style.left = x + 'px';
+                element.style.transform = `rotate(${rotation}deg)`;
+                element.style.opacity = opacity;
+                
+                if (opacity > 0 && y < window.innerHeight + 50) {
+                    requestAnimationFrame(update);
+                } else {
+                    element.remove();
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // أزرار التحكم
+        musicBtn.addEventListener('click', toggleMusic);
+        
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => location.reload(), 500);
+        });
+
+        // تهيئة عند التحميل
+        window.onload = init;
+
+    </script>
+</body>
+</html>
